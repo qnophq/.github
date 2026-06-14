@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: mailto:info@devtank42.de
+    about: Do not file a public issue. Email us privately so we can coordinate a fix and disclosure.
+  - name: Commercial licensing or support
+    url: mailto:info@devtank42.de
+    about: For commercial licensing, dedicated support, or custom-development inquiries.

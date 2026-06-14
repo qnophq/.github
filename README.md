@@ -11,19 +11,24 @@ repository under `qnophq/*` that does not provide its own override.
 | `default.json` | Renovate config consumed via `extends: ["github>qnophq/.github"]`. |
 | `.github/workflows/renovate.yml` | Reusable Renovate trigger; consumer repos call it via `uses:` with their own schedule + permissions. |
 | `.github/workflows/renovate-config-validator.yml` | Validates `default.json` on every push and PR. |
+| `.github/ISSUE_TEMPLATE/` | Default issue forms (bug report, feature request) + `config.yml` (issue chooser, contact links). |
+| `.github/PULL_REQUEST_TEMPLATE.md` | Default pull-request template. |
 
 This repository is **public** so that Renovate can resolve the
 `github>qnophq/.github` preset using each consumer repo's own
-repository-scoped `GITHUB_TOKEN` — no PAT or GitHub App is required. The file
-contains no secrets, only dependency-grouping and pinning policy.
+repository-scoped `GITHUB_TOKEN` — no PAT or GitHub App is required, and so
+that GitHub applies the default community health files (issue / PR templates)
+to every repo in the org, **including private ones** such as `qnophq/qnop`. The
+file contains no secrets.
 
 ## Override behavior
 
 A file in a specific repo's `.github/` directory always overrides the
-corresponding file here. For Renovate, per-repo `renovate.json` files extend
-`github>qnophq/.github` and add their own `packageRules` for project-specific
-stacks (e.g. the Java/Gradle and frontend groupings live in
-`qnophq/qnop/.github/renovate.json`, not here).
+corresponding file here. A repo that ships its own `.github/ISSUE_TEMPLATE/` or
+`PULL_REQUEST_TEMPLATE.md` uses those instead of these defaults. For Renovate,
+per-repo `renovate.json` files extend `github>qnophq/.github` and add their own
+`packageRules` for project-specific stacks (e.g. the Java/Gradle and frontend
+groupings live in `qnophq/qnop/.github/renovate.json`, not here).
 
 ## Self-hosted Renovate
 

@@ -1,0 +1,79 @@
+name: Bug report
+description: Report a reproducible defect.
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report.
+
+        **Before submitting:** please search existing issues to avoid duplicates, and confirm you are on a recent version.
+
+        For a suspected **security vulnerability, do not file a public issue** — email <info@devtank42.de> instead.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: One-sentence description of the bug.
+      placeholder: e.g. "Annotation anchor drifts after a new document version is uploaded"
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit SHA
+      description: Output of `git rev-parse HEAD` or the release tag you are on.
+      placeholder: e.g. "v0.1.0" or "abc1234"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: A minimal sequence of steps that reproduces the bug. Include commands, requests, or configuration snippets as needed.
+      placeholder: |
+        1. Start the stack with `docker compose up`
+        2. Upload a PDF and add an annotation on page 2
+        3. Upload a revised version
+        4. Observe the anchor position
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: What happened instead. Include any error messages or stack traces.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, JDK / Node version, browser (if relevant), database, deployment target.
+      placeholder: |
+        - OS: macOS 15.4
+        - JDK: Temurin 21.0.7
+        - Browser: Firefox 138
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs (optional)
+      description: Relevant log output. Trim to the few lines around the failure to keep this readable.
+      render: shell
+    validations:
+      required: false
