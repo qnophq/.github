@@ -1,0 +1,58 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "schedule": ["before 6am every weekday"],
+  "timezone": "Europe/Berlin",
+  "automerge": false,
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Renovate Dependency Dashboard",
+  "labels": ["dependencies"],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "packageRules": [
+    {
+      "description": "GitHub Actions minor and patch SHA bumps (grouped). Actions are pinned to commit digests org-wide; see qnophq/qnop ADR-0017.",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin", "pinDigest"],
+      "pinDigests": true,
+      "groupName": "GitHub Actions",
+      "groupSlug": "github-actions"
+    },
+    {
+      "description": "GitHub Actions major updates — separate PRs for deliberate review.",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["major"],
+      "pinDigests": true,
+      "groupName": "GitHub Actions major updates",
+      "groupSlug": "github-actions-major"
+    },
+    {
+      "description": "Docker base-image digest updates (grouped). Images are pinned to digests; see qnophq/qnop ADR-0017.",
+      "matchManagers": ["dockerfile", "docker-compose"],
+      "pinDigests": true,
+      "groupName": "Docker base images",
+      "groupSlug": "docker-base-images"
+    },
+    {
+      "description": "npm minor and patch updates (grouped).",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "npm dependencies",
+      "groupSlug": "npm-deps"
+    },
+    {
+      "description": "npm major updates — one PR per package (no grouping). Bundling unrelated majors regularly ships broken lockfiles when one package still pins an incompatible peer. Per-package PRs let each major be reviewed and merged independently.",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["major"]
+    },
+    {
+      "description": "Pin npm dependency versions exactly (no ^/~ ranges). qnophq repos ship application code, not libraries — every CI build, Docker image, and dev clone should resolve to identical bytes. Pinning turns every patch into an explicit Renovate PR with a real changelog instead of silent lockfile drift. Applies to dependencies and devDependencies only — peer- and bundled-deps keep their ranges.",
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["dependencies", "devDependencies"],
+      "rangeStrategy": "pin"
+    }
+  ]
+}
