@@ -9,7 +9,7 @@ body:
 
         **Before submitting:** please search existing issues to avoid duplicates, and confirm you are on a recent version.
 
-        For a suspected **security vulnerability, do not file a public issue** — email <info@devtank42.de> instead.
+        For a suspected **security vulnerability, do not file a public issue** — follow the [Security Policy](https://github.com/qnophq/.github/blob/main/.github/SECURITY.md) instead.
 
   - type: input
     id: summary
@@ -77,3 +77,12 @@ body:
       render: shell
     validations:
       required: false
+
+  - type: checkboxes
+    id: code-of-conduct
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/qnophq/.github/blob/main/.github/CODE_OF_CONDUCT.md).
+      options:
+        - label: I agree to follow this project's Code of Conduct.
+          required: true

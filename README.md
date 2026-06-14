@@ -13,6 +13,8 @@ repository under `qnophq/*` that does not provide its own override.
 | `.github/workflows/renovate-config-validator.yml` | Validates `default.json` on every push and PR. |
 | `.github/ISSUE_TEMPLATE/` | Default issue forms (bug report, feature request) + `config.yml` (issue chooser, contact links). |
 | `.github/PULL_REQUEST_TEMPLATE.md` | Default pull-request template. |
+| `.github/CODE_OF_CONDUCT.md` | Contributor Covenant 2.1; enforcement contact `info@devtank42.de`. |
+| `.github/SECURITY.md` | Security policy and private vulnerability-reporting channels. |
 
 This repository is **public** so that Renovate can resolve the
 `github>qnophq/.github` preset using each consumer repo's own
