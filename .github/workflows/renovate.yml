@@ -9,10 +9,16 @@
 # holds the real logic; consumers add a short stub that wires their
 # schedule + permissions in. See qnophq/qnop ADR-0017.
 #
-# Token model: this is single-repo. Each caller's GITHUB_TOKEN is scoped
-# to its own repo, so when the Renovate binary opens branches and PRs it
-# does so against the calling repo only. No PAT, no GitHub App, no
-# cross-repo write access — this is the "own/self-hosted instance".
+# Token model: Renovate authenticates as an org-installed GitHub App. The
+# caller provides the secrets RENOVATE_APP_ID + RENOVATE_APP_PRIVATE_KEY
+# (via `secrets: inherit`); this workflow mints a short-lived installation
+# token with actions/create-github-app-token, scoped to the calling repo
+# (github.repository). The built-in GITHUB_TOKEN is deliberately NOT used:
+# the org forbids GitHub Actions from creating pull requests, and any PR it
+# could open would not trigger the consumer's CI (pull_request) workflows
+# (GitHub's anti-recursion rule). An App token sidesteps both. Still
+# single-repo: the installation token only reaches the caller's own repo.
+# See qnophq/qnop ADR-0017 (amended) and issue qnophq/qnop#67.
 
 name: Renovate (reusable)
 
@@ -46,14 +52,27 @@ jobs:
     env:
       RENOVATE_LOG_LEVEL: ${{ inputs.logLevel }}
     steps:
+      # Mint a per-run installation token for the Renovate GitHub App,
+      # scoped (by default) to the repo running the workflow. The caller
+      # must expose RENOVATE_APP_ID + RENOVATE_APP_PRIVATE_KEY via
+      # `secrets: inherit`.
+      - name: Mint Renovate App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.RENOVATE_APP_ID }}
+          private-key: ${{ secrets.RENOVATE_APP_PRIVATE_KEY }}
+
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Run Renovate
         uses: renovatebot/github-action@79dc0ba74dc3de28db0a7aeb1d0b95d5bf5fde2a # v46.1.13
         with:
           configurationFile: ${{ inputs.configurationFile }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
         env:
           LOG_LEVEL: ${{ env.RENOVATE_LOG_LEVEL }}
           # renovatebot/github-action no longer infers the target repo
