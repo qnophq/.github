@@ -1,0 +1,55 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# Renovate for THIS repository.
+#
+# Deliberately a separate file from renovate.yml: that one is the reusable
+# workflow every consumer calls (`workflow_call` only), so it cannot
+# schedule itself. Adding a trigger to it would change the contract every
+# consumer depends on; a second, tiny stub keeps the two roles apart —
+# hence the -self suffix.
+#
+# Why this repo needs its own Renovate at all: it holds the org's
+# dependency tooling. The renovatebot/github-action pin here is the
+# Renovate version EVERY consumer runs, and consumer stubs pin a commit
+# SHA of this repo. Left unmanaged it silently freezes the whole
+# organisation's tooling — which is exactly what had happened
+# (actions/checkout@v6 here while the managed qnop was already on v7).
+# See qnophq/qnop ADR-0017 and qnophq/qnop#619.
+#
+# The reusable workflow is referenced by local path rather than by
+# owner/repo@sha: pinning a repository to a commit of itself would need a
+# second commit after every change to stay current, and the two files
+# always ship together anyway.
+#
+# PREREQUISITE: RENOVATE_APP_ID + RENOVATE_APP_PRIVATE_KEY must be
+# readable here (org secrets, or repo secrets on this repo) and the
+# Renovate GitHub App installed on it. Without both the run fails at
+# token minting.
+
+name: Renovate (this repo)
+
+on:
+  schedule:
+    - cron: "40 4 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: "Log level"
+        type: choice
+        default: "info"
+        options:
+          - info
+          - debug
+
+jobs:
+  renovate:
+    uses: ./.github/workflows/renovate.yml
+    # Permissions belong on the calling job; the reusable workflow inherits
+    # them for the duration of the call.
+    permissions:
+      contents: write # branch + push
+      pull-requests: write # open + label PRs
+      issues: write # update the Dependency Dashboard issue
+    secrets: inherit
+    with:
+      logLevel: ${{ inputs.logLevel || 'info' }}

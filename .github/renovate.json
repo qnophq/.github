@@ -1,0 +1,5 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["github>qnophq/.github"],
+  "description": "Renovate configuration for this repository itself — distinct from default.json, which is the preset consumers extend and which Renovate does not read as a repo's own config. Without this file the repo holding the org's Renovate tooling was the only one nobody updated: it pins the renovatebot/github-action version every consumer runs, and consumer stubs pin a commit SHA of this repo. It extends its own preset deliberately (dogfooding), so a preset change is felt here first, and spells it the same way every other consumer does so one grep finds them all."
+}

@@ -1,10 +1,11 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 #
-# Validates default.json on every push and PR.
+# Validates this repo's Renovate configs on every push and PR.
 #
-# Why: a syntactically broken org-wide Renovate config silently disables
-# dependency updates across every repo in the org. We want that caught at
-# PR time, not on the next scheduled Renovate run.
+# Two files, two blast radii: default.json is the org-wide preset, so a
+# syntactically broken one silently disables dependency updates across
+# every repo in the org; .github/renovate.json only governs this repo. We
+# want both caught at PR time, not on the next scheduled Renovate run.
 #
 # Tool: Renovate's own `renovate-config-validator` invoked via npx with
 # the `--strict` flag (warnings become errors). The validator ships in the
@@ -22,10 +23,12 @@ on:
     branches: [main]
     paths:
       - "default.json"
+      - ".github/renovate.json"
       - ".github/workflows/renovate-config-validator.yml"
   pull_request:
     paths:
       - "default.json"
+      - ".github/renovate.json"
       - ".github/workflows/renovate-config-validator.yml"
 
 permissions:
@@ -43,5 +46,7 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Validate default.json
-        run: npx --yes --package renovate -- renovate-config-validator --strict default.json
+      # Both files in one invocation: the validator takes several paths and
+      # fails the step if any of them is invalid.
+      - name: Validate the Renovate configs
+        run: npx --yes --package renovate -- renovate-config-validator --strict default.json .github/renovate.json
